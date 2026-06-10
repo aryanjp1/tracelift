@@ -1,0 +1,39 @@
+[build-system]
+requires = ["maturin>=1.5,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "tracelift"
+version = "0.1.0"
+description = "Load agent/LLM trace files (JSONL, OTLP-JSON) into polars and find failures, cost and latency"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Aryan Sharma", email = "aryanjp032001@gmail.com" }]
+keywords = ["llm", "agents", "tracing", "observability", "opentelemetry", "polars"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Rust",
+    "Topic :: Software Development :: Debuggers",
+    "Topic :: System :: Logging",
+]
+dependencies = ["polars>=1.0"]
+
+[project.urls]
+Repository = "https://github.com/aryansharma/tracelift"
+
+[project.scripts]
+tracelift = "tracelift.cli:main"
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[tool.maturin]
+manifest-path = "bindings/Cargo.toml"
+python-source = "python"
+module-name = "tracelift._tracelift"
+features = ["pyo3/extension-module"]
+strip = true

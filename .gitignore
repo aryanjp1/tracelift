@@ -1,0 +1,9 @@
+/target
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+dist/
+*.egg-info/
+.venv/
+bench/data/

@@ -1,0 +1,15 @@
+[package]
+name = "tracelift-py"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Python bindings for tracelift"
+
+[lib]
+name = "_tracelift"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.27", features = ["abi3-py310"] }
+tracelift-core = { path = "../core" }

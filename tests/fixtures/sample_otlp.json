@@ -1,0 +1,49 @@
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {"key": "service.name", "value": {"stringValue": "lead-pipeline"}}
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {"name": "openinference.instrumentation"},
+          "spans": [
+            {
+              "traceId": "0af7651916cd43dd8448eb211c80319c",
+              "spanId": "b7ad6b7169203331",
+              "name": "chat gpt-4o-mini",
+              "kind": 3,
+              "startTimeUnixNano": "1749500020000000000",
+              "endTimeUnixNano": "1749500021200000000",
+              "attributes": [
+                {"key": "gen_ai.operation.name", "value": {"stringValue": "chat"}},
+                {"key": "gen_ai.provider.name", "value": {"stringValue": "openai"}},
+                {"key": "gen_ai.response.model", "value": {"stringValue": "gpt-4o-mini-2024-07-18"}},
+                {"key": "gen_ai.usage.input_tokens", "value": {"intValue": "640"}},
+                {"key": "gen_ai.usage.output_tokens", "value": {"intValue": "97"}}
+              ],
+              "status": {"code": 1}
+            },
+            {
+              "traceId": "0af7651916cd43dd8448eb211c80319c",
+              "spanId": "c5e1b3aa00112233",
+              "parentSpanId": "b7ad6b7169203331",
+              "name": "execute_tool fetch_listing",
+              "kind": 3,
+              "startTimeUnixNano": "1749500021300000000",
+              "endTimeUnixNano": "1749500021900000000",
+              "attributes": [
+                {"key": "gen_ai.operation.name", "value": {"stringValue": "execute_tool"}},
+                {"key": "gen_ai.tool.name", "value": {"stringValue": "fetch_listing"}},
+                {"key": "gen_ai.tool.call.id", "value": {"stringValue": "call_5521"}}
+              ],
+              "status": {"code": 2, "message": "connection reset"}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

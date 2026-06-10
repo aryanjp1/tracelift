@@ -1,0 +1,10 @@
+[package]
+name = "tracelift-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Parsing core for tracelift: normalize agent/LLM trace files into columnar batches"
+
+[dependencies]
+serde_json = "1"
