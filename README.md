@@ -36,6 +36,21 @@ cost by model
 
 `--json` emits the same summary as JSON for scripting.
 
+## Performance
+
+Parsing a 889 MB / 3M-span JSONL trace into the normalized table, versus
+an idiomatic pandas loader building the same columns (16-core i7-13620H,
+polars 1.41, median of 3):
+
+| stage          | tracelift     | pandas        |
+|----------------|---------------|---------------|
+| load only      | 2.3 s, 1.6 GB | 14.3 s, 4.2 GB |
+| load + summary | 2.7 s, 4.3 GB | 15.5 s, 4.2 GB |
+
+~6x faster to load and ~2.6x less memory; ~5.6x faster end to end.
+Reproduce with `bench/generate.py` then `bench/run.py` — see
+[bench/RESULTS.md](bench/RESULTS.md) for method and honesty notes.
+
 ## Python
 
 ```python

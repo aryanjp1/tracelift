@@ -17,9 +17,9 @@ import sys
 MEASURE = os.path.join(os.path.dirname(__file__), "_measure.py")
 
 
-def run_once(mode: str, path: str) -> tuple[float, float]:
+def run_once(mode: str, stage: str, path: str) -> tuple[float, float]:
     result = subprocess.run(
-        [sys.executable, MEASURE, mode, path], stdout=subprocess.PIPE, check=True
+        [sys.executable, MEASURE, mode, stage, path], stdout=subprocess.PIPE, check=True
     )
     elapsed, max_rss_kb = result.stdout.decode().split()
     return float(elapsed), float(max_rss_kb) / 1024
@@ -32,16 +32,20 @@ def main() -> None:
     args = parser.parse_args()
 
     size_mb = os.path.getsize(args.file) / 1e6
-    print(f"file: {args.file} ({size_mb:.0f} MB)\n")
-    print(f"{'engine':<10} {'median s':>9} {'peak RSS MB':>12}")
+    print(f"file: {args.file} ({size_mb:.0f} MB), median of {args.repeat}\n")
 
-    for mode in ("tracelift", "pandas"):
-        times, rss = [], []
-        for _ in range(args.repeat):
-            t, m = run_once(mode, args.file)
-            times.append(t)
-            rss.append(m)
-        print(f"{mode:<10} {statistics.median(times):>9.2f} {max(rss):>12.0f}")
+    for stage in ("load", "full"):
+        label = "load only" if stage == "load" else "load + summary"
+        print(f"[{label}]")
+        print(f"  {'engine':<10} {'median s':>9} {'peak RSS MB':>12}")
+        for mode in ("tracelift", "pandas"):
+            times, rss = [], []
+            for _ in range(args.repeat):
+                t, m = run_once(mode, stage, args.file)
+                times.append(t)
+                rss.append(m)
+            print(f"  {mode:<10} {statistics.median(times):>9.2f} {max(rss):>12.0f}")
+        print()
 
 
 if __name__ == "__main__":

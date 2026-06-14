@@ -11,5 +11,6 @@ name = "_tracelift"
 crate-type = ["cdylib"]
 
 [dependencies]
-pyo3 = { version = "0.27", features = ["abi3-py310"] }
+arrow = { version = "59.0.0", features = ["pyarrow"] }
+pyo3 = { version = "0.28", features = ["abi3-py310"] }
 tracelift-core = { path = "../core" }

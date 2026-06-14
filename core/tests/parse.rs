@@ -1,6 +1,6 @@
 use std::io::Cursor;
 
-use tracelift_core::{parse_jsonl, parse_otlp, parse_path, Format};
+use tracelift_core::{parse_jsonl, parse_otlp, parse_path, parse_path_chunked, Format};
 
 const SAMPLE_JSONL: &str = include_str!(concat!(
     env!("CARGO_MANIFEST_DIR"),
@@ -101,6 +101,35 @@ fn garbage_never_panics() {
     let (cols, report) = parse_jsonl(Cursor::new(&half_json[..]));
     assert_eq!(cols.len(), 0);
     assert_eq!(report.skipped, 1);
+}
+
+#[test]
+fn chunked_matches_sequential() {
+    let dir = std::env::temp_dir();
+    let path = dir.join("tracelift_test_chunked.jsonl");
+    std::fs::write(&path, SAMPLE_JSONL).unwrap();
+
+    let (seq_cols, seq_report) = parse_jsonl(Cursor::new(SAMPLE_JSONL));
+
+    // block size of 2 forces several blocks and several sink calls
+    let mut chunked = tracelift_core::Columns::default();
+    let mut report = tracelift_core::ParseReport::default();
+    let mut sink_calls = 0;
+    parse_path_chunked(&path, Format::Jsonl, 2, &mut |c, r| {
+        sink_calls += 1;
+        chunked.append(c);
+        report.merge(r);
+    })
+    .unwrap();
+
+    assert!(sink_calls > 1);
+    assert_eq!(chunked.span_id, seq_cols.span_id);
+    assert_eq!(chunked.input_tokens, seq_cols.input_tokens);
+    assert_eq!(chunked.status, seq_cols.status);
+    assert_eq!(report.spans_parsed, seq_report.spans_parsed);
+    assert_eq!(report.skipped, seq_report.skipped);
+
+    std::fs::remove_file(path).ok();
 }
 
 #[test]

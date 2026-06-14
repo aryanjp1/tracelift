@@ -7,4 +7,5 @@ repository.workspace = true
 description = "Parsing core for tracelift: normalize agent/LLM trace files into columnar batches"
 
 [dependencies]
+rayon = "1.12.0"
 serde_json = "1"

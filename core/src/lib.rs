@@ -7,6 +7,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader, Read, Seek, SeekFrom};
 use std::path::Path;
 
+pub use jsonl::DEFAULT_BLOCK_LINES;
 pub use model::{Columns, ParseReport};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -32,6 +33,24 @@ impl std::str::FromStr for Format {
 }
 
 pub fn parse_path(path: &Path, format: Format) -> std::io::Result<(Columns, ParseReport)> {
+    let mut columns = Columns::default();
+    let mut report = ParseReport::default();
+    parse_path_chunked(path, format, DEFAULT_BLOCK_LINES, &mut |c, r| {
+        columns.append(c);
+        report.merge(r);
+    })?;
+    Ok((columns, report))
+}
+
+/// Parse a file and hand each parsed block to `sink` as soon as it is
+/// ready, keeping peak memory bounded by `block_lines` instead of file
+/// size. JSONL blocks are parsed in parallel across the rayon pool.
+pub fn parse_path_chunked(
+    path: &Path,
+    format: Format,
+    block_lines: usize,
+    sink: &mut dyn FnMut(Columns, ParseReport),
+) -> std::io::Result<()> {
     let mut file = File::open(path)?;
     let format = match format {
         Format::Auto => {
@@ -43,8 +62,12 @@ pub fn parse_path(path: &Path, format: Format) -> std::io::Result<(Columns, Pars
     };
     let reader = BufReader::with_capacity(1 << 20, file);
     match format {
-        Format::Jsonl => Ok(jsonl::parse(reader)),
-        Format::Otlp => otlp::parse(reader),
+        Format::Jsonl => jsonl::parse_chunked(reader, block_lines, sink),
+        Format::Otlp => {
+            let (columns, report) = otlp::parse(reader)?;
+            sink(columns, report);
+            Ok(())
+        }
         Format::Auto => unreachable!(),
     }
 }

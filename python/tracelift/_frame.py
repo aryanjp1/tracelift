@@ -77,8 +77,17 @@ def load(path: str | Path, format: str = "auto") -> TraceSet:
     format: "jsonl", "otlp" or "auto" (default; sniffs the file head).
     Malformed lines are skipped and counted in TraceSet.report.
     """
-    columns, report = parse_file(str(path), format)
-    df = pl.DataFrame(columns, schema=SCHEMA).with_columns(
+    batches, report = parse_file(str(path), format)
+    # The Rust core returns one Arrow batch per parse block. Convert each to
+    # polars and release the Rust-side batch immediately, so a batch and its
+    # polars copy are never both resident for the whole file.
+    frames = []
+    for i in range(len(batches)):
+        frames.append(pl.from_arrow(batches[i], rechunk=False))
+        batches[i] = None
+    df = frames[0] if len(frames) == 1 else pl.concat(frames, rechunk=False)
+    del frames
+    df = df.with_columns(
         ((pl.col("end_ns") - pl.col("start_ns")) / 1e6).alias("duration_ms")
     )
     return TraceSet(df, ParseReport(**report), source=str(path))

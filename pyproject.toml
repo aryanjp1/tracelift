@@ -20,7 +20,7 @@ classifiers = [
     "Topic :: Software Development :: Debuggers",
     "Topic :: System :: Logging",
 ]
-dependencies = ["polars>=1.0"]
+dependencies = ["polars>=1.0", "pyarrow>=15"]
 
 [project.urls]
 Repository = "https://github.com/aryansharma/tracelift"

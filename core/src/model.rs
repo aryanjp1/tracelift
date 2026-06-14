@@ -99,6 +99,28 @@ impl Columns {
         self.trace_id.len()
     }
 
+    pub fn append(&mut self, mut other: Columns) {
+        self.trace_id.append(&mut other.trace_id);
+        self.span_id.append(&mut other.span_id);
+        self.parent_span_id.append(&mut other.parent_span_id);
+        self.name.append(&mut other.name);
+        self.kind.append(&mut other.kind);
+        self.start_ns.append(&mut other.start_ns);
+        self.end_ns.append(&mut other.end_ns);
+        self.provider.append(&mut other.provider);
+        self.model.append(&mut other.model);
+        self.input_tokens.append(&mut other.input_tokens);
+        self.output_tokens.append(&mut other.output_tokens);
+        self.cache_read_tokens.append(&mut other.cache_read_tokens);
+        self.cost.append(&mut other.cost);
+        self.tool_name.append(&mut other.tool_name);
+        self.tool_call_id.append(&mut other.tool_call_id);
+        self.agent_name.append(&mut other.agent_name);
+        self.conversation_id.append(&mut other.conversation_id);
+        self.error_type.append(&mut other.error_type);
+        self.status.append(&mut other.status);
+    }
+
     pub fn is_empty(&self) -> bool {
         self.trace_id.is_empty()
     }
@@ -141,6 +163,18 @@ impl ParseReport {
         self.skipped += 1;
         if self.error_samples.len() < ERROR_SAMPLE_LIMIT {
             self.error_samples.push(context());
+        }
+    }
+
+    pub fn merge(&mut self, other: ParseReport) {
+        self.lines_read += other.lines_read;
+        self.spans_parsed += other.spans_parsed;
+        self.skipped += other.skipped;
+        for sample in other.error_samples {
+            if self.error_samples.len() == ERROR_SAMPLE_LIMIT {
+                break;
+            }
+            self.error_samples.push(sample);
         }
     }
 }
