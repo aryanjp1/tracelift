@@ -5,25 +5,57 @@ build-backend = "maturin"
 [project]
 name = "tracelift"
 version = "0.1.0"
-description = "Load agent/LLM trace files (JSONL, OTLP-JSON) into polars and find failures, cost and latency"
+description = "Analyze LLM and AI agent traces fast: parse JSONL and OpenTelemetry OTLP-JSON into polars to find failed tool calls, token cost, and latency"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [{ name = "Aryan Sharma", email = "aryanjp032001@gmail.com" }]
-keywords = ["llm", "agents", "tracing", "observability", "opentelemetry", "polars"]
+keywords = [
+    "llm",
+    "ai-agents",
+    "agents",
+    "agent-tracing",
+    "llm-observability",
+    "llm-tracing",
+    "tracing",
+    "observability",
+    "opentelemetry",
+    "otlp",
+    "genai",
+    "llmops",
+    "token-cost",
+    "latency",
+    "polars",
+    "rust",
+    "trace-analysis",
+]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
     "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Programming Language :: Rust",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Software Development :: Debuggers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: System :: Logging",
+    "Topic :: System :: Monitoring",
+    "Typing :: Typed",
 ]
 dependencies = ["polars>=1.0", "pyarrow>=15"]
 
 [project.urls]
+Homepage = "https://github.com/aryanjp1/tracelift"
 Repository = "https://github.com/aryanjp1/tracelift"
+Issues = "https://github.com/aryanjp1/tracelift/issues"
+Changelog = "https://github.com/aryanjp1/tracelift/releases"
 
 [project.scripts]
 tracelift = "tracelift.cli:main"
